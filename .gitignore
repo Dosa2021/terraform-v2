@@ -1,0 +1,21 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
+override.tf
+*_override.tf
+
+# 変数ファイル（シークレットを含む可能性）
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# 環境変数・認証情報
+.env
+.env.*
+*.pem
+*.key
