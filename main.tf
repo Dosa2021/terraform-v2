@@ -63,45 +63,36 @@ resource "aws_route_table_association" "public" {
 
 # セキュリティグループ
 # ファイアウォールのルール定義（どのポートからの通信を許可するか）
-# resource "aws_security_group" "web" {
-#   name        = "terraform-web-sg"
-#   description = "Security group for web server"
-#   vpc_id      = aws_vpc.main.id
+resource "aws_security_group" "web" {
+  name        = "terraform-web-sg"
+  description = "Security group for web server"
+  vpc_id      = aws_vpc.main.id
 
-#   # インバウンドルール（外部からの通信）：HTTP
-#   ingress {
-#     from_port   = 80           # 開始ポート
-#     to_port     = 80           # 終了ポート
-#     protocol    = "tcp"        # プロトコル
-#     cidr_blocks = ["0.0.0.0/0"]  # すべてのIPアドレスから許可
-#     description = "Allow HTTP"
-#   }
+  # インバウンドルール（外部からの通信）：HTTP
+  ingress {
+    from_port   = 80           # 開始ポート
+    to_port     = 80           # 終了ポート
+    protocol    = "tcp"        # プロトコル
+    cidr_blocks = ["0.0.0.0/0"]  # すべてのIPアドレスから許可
+    description = "Allow HTTP"
+  }
 
-#   # インバウンドルール：SSH（サーバーにリモート接続するため）
-#   ingress {
-#     from_port   = 22
-#     to_port     = 22
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]  # 本番環境では自社IPのみに制限推奨
-#     description = "Allow SSH"
-#   }
+  # インバウンドルール：SSH（サーバーにリモート接続するため）
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # 本番環境では自社IPのみに制限推奨
+    description = "Allow SSH"
+  }
 
-#   # アウトバウンドルール（サーバーから外部への通信）
-#   egress {
-#     from_port   = 0              # すべてのポート
-#     to_port     = 0
-#     protocol    = "-1"           # すべてのプロトコル
-#     cidr_blocks = ["0.0.0.0/0"]  # すべての宛先へ許可
-#   }
+  # アウトバウンドルール（サーバーから外部への通信）
+  egress {
+    from_port   = 0              # すべてのポート
+    to_port     = 0
+    protocol    = "-1"           # すべてのプロトコル
+    cidr_blocks = ["0.0.0.0/0"]  # すべての宛先へ許可
+  }
 
-#   tags = { Name = "terraform-web-sg" }
-# }
-
-# EC2インスタンス（仮想サーバー）
-# resource "aws_instance" "web" {
-#   ami                    = var.ami_id  # Amazon Machine Image（OSのテンプレート）
-#   instance_type          = "t2.micro"  # インスタンスタイプ（CPU・メモリのスペック）
-#   subnet_id              = aws_subnet.public.id
-#   vpc_security_group_ids = [aws_security_group.web.id]
-#   tags = { Name = "terraform-web-server" }
-# }
+  tags = { Name = "terraform-web-sg" }
+}
