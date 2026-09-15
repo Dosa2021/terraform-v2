@@ -1,8 +1,21 @@
 resource "aws_instance" "test-ec2" {
   ami                    = var.ami_id
-  instance_type          = "t3.micro"
+  instance_type          = var.instance_type
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web.id]
+
+  root_block_device {
+    encrypted = false
+    tags      = {}
+    tags_all  = {}
+
+    volume_size           = 8
+    volume_type           = "gp3"
+    iops                  = 3000
+    throughput            = 125
+    delete_on_termination = true
+  }
+
   tags = {
     Name = "${var.environment}-web-server"
   }
@@ -61,15 +74,5 @@ resource "aws_instance" "test-ec2" {
     enable_resource_name_dns_a_record    = false
     enable_resource_name_dns_aaaa_record = false
     hostname_type                        = "ip-name"
-  }
-  root_block_device {
-    delete_on_termination = true
-    encrypted             = false
-    iops                  = 3000
-    tags                  = {}
-    tags_all              = {}
-    throughput            = 125
-    volume_size           = 8
-    volume_type           = "gp3"
   }
 }
