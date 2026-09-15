@@ -65,11 +65,12 @@ resource "aws_security_group" "web" {
 
   # インバウンドルール（外部からの通信）：HTTP
   ingress {
-    from_port   = 80            # 開始ポート
-    to_port     = 80            # 終了ポート
-    protocol    = "tcp"         # プロトコル
-    cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
-    description = "Allow HTTP"
+    from_port = 80    # 開始ポート
+    to_port   = 80    # 終了ポート
+    protocol  = "tcp" # プロトコル
+    # cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
+    security_groups = [aws_security_group.elb.id]
+    description     = "Allow HTTP"
   }
 
   # インバウンドルール：SSH（サーバーにリモート接続するため）
