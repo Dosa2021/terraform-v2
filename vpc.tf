@@ -59,7 +59,7 @@ resource "aws_route_table_association" "public-c" {
 # セキュリティグループ
 # ファイアウォールのルール定義（どのポートからの通信を許可するか）
 resource "aws_security_group" "web" {
-  name        = "terraform-web-sg"
+  name        = "${var.environment}-terraform-web-sg"
   description = "Security group for web server"
   vpc_id      = aws_vpc.main.id
 
@@ -89,5 +89,30 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"] # すべての宛先へ許可
   }
 
-  tags = { Name = "terraform-web-sg" }
+  tags = { Name = "${var.environment}-terraform-web-sg" }
+}
+
+resource "aws_security_group" "elb" {
+  name        = "${var.environment}-terraform-elb-sg"
+  description = "Security group for elb"
+  vpc_id      = aws_vpc.main.id
+
+  # インバウンドルール（外部からの通信）：HTTP
+  ingress {
+    from_port   = 80            # 開始ポート
+    to_port     = 80            # 終了ポート
+    protocol    = "tcp"         # プロトコル
+    cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
+    description = "Allow HTTP"
+  }
+
+  # アウトバウンドルール（サーバーから外部への通信）
+  egress {
+    from_port   = 0 # すべてのポート
+    to_port     = 0
+    protocol    = "-1"          # すべてのプロトコル
+    cidr_blocks = ["0.0.0.0/0"] # すべての宛先へ許可
+  }
+
+  tags = { Name = "${var.environment}-terraform-elb-sg" }
 }
