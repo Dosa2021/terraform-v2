@@ -24,7 +24,6 @@ resource "aws_subnet" "public-c" {
   tags                    = { Name = "terraform-public-subnet-c" }
 }
 
-
 # インターネットゲートウェイ
 # VPCとインターネットを接続するゲート
 resource "aws_internet_gateway" "main" {
@@ -49,6 +48,11 @@ resource "aws_route_table" "public" {
 # サブネットにルートテーブルを適用
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "public-c" {
+  subnet_id      = aws_subnet.public-c.id
   route_table_id = aws_route_table.public.id
 }
 
