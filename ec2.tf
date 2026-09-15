@@ -3,6 +3,13 @@
 # __generated__ by Terraform
 resource "aws_instance" "test-ec2" {
   ami                    = var.ami_id  # Amazon Machine Image（OSのテンプレート）
+  instance_type                        = "t3.micro"
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.web.id]
+  tags = {
+    Name = "web-server"
+  }
+
   associate_public_ip_address          = true
   disable_api_stop                     = false
   disable_api_termination              = false
@@ -10,7 +17,6 @@ resource "aws_instance" "test-ec2" {
   get_password_data                    = false
   hibernation                          = false
   instance_initiated_shutdown_behavior = "stop"
-  instance_type                        = "t3.micro"
   key_name                             = "my-key"
   monitoring                           = false
   placement_partition_number           = 0
@@ -18,18 +24,10 @@ resource "aws_instance" "test-ec2" {
   secondary_private_ips                = []
   security_groups                      = []
   source_dest_check                    = true
-  subnet_id              = aws_subnet.public.id
 
-  tags = {
-    Name = "web-server"
-  }
-  tags_all = {
-    Name = "web-server"
-  }
   tenancy                     = "default"
   user_data_replace_on_change = null
   volume_tags                 = null
-  vpc_security_group_ids = [aws_security_group.web.id]
 
   user_data = <<-EOF
     #!/bin/bash
