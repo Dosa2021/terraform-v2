@@ -1,3 +1,9 @@
+variable "environment" {
+  description = "environment"
+  type        = string
+  default     = "dev"
+}
+
 variable "aws_region" {
   description = "AWS region"  # 変数の説明
   type        = string        # データ型（文字列）
