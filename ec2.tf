@@ -1,9 +1,6 @@
-# __generated__ by Terraform
-# Please review these resources and move them into your main configuration files.
-# __generated__ by Terraform
 resource "aws_instance" "test-ec2" {
-  ami                    = var.ami_id  # Amazon Machine Image（OSのテンプレート）
-  instance_type                        = "t3.micro"
+  ami                    = var.ami_id
+  instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web.id]
   tags = {
