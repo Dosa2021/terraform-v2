@@ -36,15 +36,15 @@ resource "aws_instance" "test-ec2" {
   source_dest_check                    = true
 
   tenancy                     = "default"
-  user_data_replace_on_change = null
+  user_data_replace_on_change = true
   volume_tags                 = null
 
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
     yum install -y httpd
-    systemctl start httpd
-    systemctl enable httpd
+    echo "<h1>Hello!!</h1>" > /var/www/html/index.html
+    systemctl enable --now httpd
   EOF
 
   capacity_reservation_specification {
