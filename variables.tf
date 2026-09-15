@@ -7,5 +7,17 @@ variable "aws_region" {
 variable "ami_id" {
   description = "AMI ID for EC2"
   type        = string
-  default     = "ami-0d52744d6551d851e"  # Amazon Linux 2023（東京リージョン用）
+  default     = "ami-0794a632d5c1058bf"  # Amazon Linux 2023（東京リージョン用）
+}
+
+variable "access_key" {
+  description = "access_key"
+  type        = string
+  default     = ""
+}
+
+variable "secret_key" {
+  description = "secret_key"
+  type        = string
+  default     = ""
 }
