@@ -5,6 +5,7 @@ resource "aws_cloudfront_distribution" "test" {
   price_class         = "PriceClass_All"
   aliases             = ["test.dosaken.org"]
   default_root_object = ""
+  #   TODO: waf
   #   web_acl_id          = "arn:aws:wafv2:us-east-1:797964065122:global/webacl/CreatedByCloudFront-1f1d650c/2fff20b6-92ee-4fad-a5c9-b7a25229c223"
 
   tags = {
