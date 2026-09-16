@@ -1,3 +1,9 @@
+data "aws_acm_certificate" "alb" {
+  domain      = var.domain_name
+  statuses    = ["ISSUED"]
+  most_recent = true
+}
+
 # ---------------------------------------------
 # ALB(追加)
 # ---------------------------------------------
@@ -44,8 +50,9 @@ resource "aws_lb_listener" "aws_listener_https" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 443
   protocol          = "HTTPS"
-  certificate_arn   = "arn:aws:acm:ap-northeast-1:797964065122:certificate/a983bf43-ec7f-40b2-b860-964882a77cfa"
-  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  # certificate_arn   = "arn:aws:acm:ap-northeast-1:797964065122:certificate/a983bf43-ec7f-40b2-b860-964882a77cfa"
+  certificate_arn = data.aws_acm_certificate.alb.arn
+  ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
   default_action {
     type             = "forward"

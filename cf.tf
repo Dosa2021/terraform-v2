@@ -1,3 +1,10 @@
+data "aws_acm_certificate" "cloudfront" {
+  provider    = aws.us_east_1
+  domain      = var.domain_name
+  statuses    = ["ISSUED"]
+  most_recent = true
+}
+
 resource "aws_cloudfront_distribution" "test" {
   enabled             = true
   is_ipv6_enabled     = true
@@ -47,7 +54,8 @@ resource "aws_cloudfront_distribution" "test" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = "arn:aws:acm:us-east-1:797964065122:certificate/c182dd41-de46-469c-8da8-a6197b02c18d"
+    # acm_certificate_arn      = "arn:aws:acm:us-east-1:797964065122:certificate/c182dd41-de46-469c-8da8-a6197b02c18d"
+    acm_certificate_arn      = data.aws_acm_certificate.cloudfront.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }

@@ -28,6 +28,11 @@ variable "secret_key" {
   default     = ""
 }
 
+variable "domain_name" {
+  type    = string
+  default = "test.dosaken.org"
+}
+
 variable "instance_type" {
   description = "instance_type"
   type        = string
