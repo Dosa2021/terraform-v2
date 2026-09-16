@@ -29,8 +29,14 @@ variable "secret_key" {
 }
 
 variable "domain_name" {
-  type    = string
-  default = "test.dosaken.org"
+  description = "Public domain name"
+  type        = string
+  default     = "test.org"
+}
+
+variable "route53_zone_id" {
+  description = "Route53 hosted zone ID for the domain"
+  type        = string
 }
 
 variable "instance_type" {
