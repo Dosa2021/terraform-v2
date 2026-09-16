@@ -8,28 +8,11 @@ resource "aws_cloudfront_distribution" "test" {
   #   web_acl_id          = "arn:aws:wafv2:us-east-1:797964065122:global/webacl/CreatedByCloudFront-1f1d650c/2fff20b6-92ee-4fad-a5c9-b7a25229c223"
 
   tags = {
-    Name = "test-distribution"
+    Name = "${var.environment}-distribution"
   }
 
   # 現在の ALB オリジン
   origin {
-    domain_name = aws_lb.alb.dns_name
-    origin_id   = aws_lb.alb.dns_name
-
-    custom_origin_config {
-      http_port                = 80
-      https_port               = 443
-      origin_protocol_policy   = "https-only"
-      origin_ssl_protocols     = ["TLSv1.2"]
-      origin_keepalive_timeout = 5
-      origin_read_timeout      = 30
-    }
-  }
-
-  # 既存（古い ALB）オリジン — 現状の AWS 設定と一致させるため残す
-  origin {
-    # domain_name = "dev-app-alb-8841407.ap-northeast-1.elb.amazonaws.com"
-    # origin_id   = "dev-app-alb-8841407.ap-northeast-1.elb.amazonaws.com-mu3jb6itrid"
     domain_name = aws_lb.alb.dns_name
     origin_id   = aws_lb.alb.dns_name
 
