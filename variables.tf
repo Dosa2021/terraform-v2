@@ -28,6 +28,17 @@ variable "secret_key" {
   default     = ""
 }
 
+variable "domain_name" {
+  description = "Public domain name"
+  type        = string
+  default     = "test.org"
+}
+
+variable "route53_zone_id" {
+  description = "Route53 hosted zone ID for the domain"
+  type        = string
+}
+
 variable "instance_type" {
   description = "instance_type"
   type        = string
