@@ -12,6 +12,13 @@ resource "aws_lb" "alb" {
     aws_subnet.public.id,
     aws_subnet.public-c.id
   ]
+
+  # 作成: IGW / ルートが先。削除: ALB が先（IGW destroy のブロック防止）
+  depends_on = [
+    aws_internet_gateway.main,
+    aws_route_table_association.public,
+    aws_route_table_association.public-c,
+  ]
 }
 
 # ---------------------------------------------
@@ -27,6 +34,46 @@ resource "aws_lb_listener" "aws_listener_http" {
     target_group_arn = aws_lb_target_group.alb_target_group.arn
   }
 }
+
+resource "aws_lb_listener" "aws_listener_https" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = 443
+  certificate_arn   = "arn:aws:acm:ap-northeast-1:797964065122:certificate/a983bf43-ec7f-40b2-b860-964882a77cfa"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
+    # forward {
+    #   stickiness {
+    #     duration = 3600
+    #     enabled  = false
+    #   }
+    #   target_group {
+    #     arn    = "arn:aws:elasticloadbalancing:ap-northeast-1:797964065122:targetgroup/dev-app-tg/5bdb65bb4c6cebad"
+    #     weight = 1
+    #   }
+    # }
+    # default_action {
+    #   type             = "forward"
+    #   target_group_arn = aws_lb_target_group.alb_target_group.arn
+    # }
+
+
+
+  }
+  # forward {
+  #   stickiness {
+  #     duration = 3600
+  #     enabled  = false
+  #   }
+  #   target_group {
+  #     arn    = "arn:aws:elasticloadbalancing:ap-northeast-1:797964065122:targetgroup/dev-app-tg/5bdb65bb4c6cebad"
+  #     weight = 1
+  #   }
+  # }
+
+}
+
 
 # ---------------------------------------------
 # target group(追加)

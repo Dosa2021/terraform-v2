@@ -106,6 +106,14 @@ resource "aws_security_group" "elb" {
     cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
     description = "Allow HTTP"
   }
+  ingress {
+    from_port   = 443           # 開始ポート
+    to_port     = 443           # 終了ポート
+    protocol    = "tcp"         # プロトコル
+    cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
+    description = "Allow HTTPS"
+  }
+
 
   # アウトバウンドルール（サーバーから外部への通信）
   egress {
