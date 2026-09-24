@@ -93,25 +93,23 @@ resource "aws_security_group" "web" {
   tags = { Name = "${var.environment}-terraform-web-sg" }
 }
 
+# CloudFront から ALB への通信のみ許可するためのマネージドプレフィックスリスト
+data "aws_ec2_managed_prefix_list" "cloudfront" {
+  name = "com.amazonaws.global.cloudfront.origin-facing"
+}
+
 resource "aws_security_group" "elb" {
   name        = "${var.environment}-terraform-elb-sg"
   description = "Security group for elb"
   vpc_id      = aws_vpc.main.id
 
-  # インバウンドルール（外部からの通信）：HTTP
+  # CloudFront → ALB は https-only のため 443 のみ許可（プレフィックスリストはルール数を多く消費する）
   ingress {
-    from_port   = 80            # 開始ポート
-    to_port     = 80            # 終了ポート
-    protocol    = "tcp"         # プロトコル
-    cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
-    description = "Allow HTTP"
-  }
-  ingress {
-    from_port   = 443           # 開始ポート
-    to_port     = 443           # 終了ポート
-    protocol    = "tcp"         # プロトコル
-    cidr_blocks = ["0.0.0.0/0"] # すべてのIPアドレスから許可
-    description = "Allow HTTPS"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
+    description     = "HTTPS from CloudFront only"
   }
 
 
