@@ -35,14 +35,10 @@ resource "aws_lb_listener" "aws_listener_http" {
   port              = 80
   protocol          = "HTTP"
 
+  # CF オリジンが http-only のため、80 は TG へ転送（HTTPS リダイレクトだと CF が 301 を受けてしまう）
   default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
   }
 }
 

@@ -103,13 +103,21 @@ resource "aws_security_group" "elb" {
   description = "Security group for elb"
   vpc_id      = aws_vpc.main.id
 
-  # CloudFront → ALB は https-only のため 443 のみ許可（プレフィックスリストはルール数を多く消費する）
+  # CF オリジン http-only 用（応急）。本番では CloudFront プレフィックスリスト等に戻す
   ingress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
-    description     = "HTTPS from CloudFront only"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP for CloudFront origin (temporary http-only)"
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS (temporary open for debugging)"
   }
 
 
