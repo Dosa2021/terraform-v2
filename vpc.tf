@@ -73,6 +73,15 @@ resource "aws_security_group" "web" {
     description     = "Allow HTTP"
   }
 
+  # ALB → Nuxt (docker compose)
+  ingress {
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.elb.id]
+    description     = "Nuxt from ALB"
+  }
+
   # インバウンドルール：SSH（サーバーにリモート接続するため）
   ingress {
     from_port   = 22
