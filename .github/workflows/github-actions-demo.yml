@@ -1,0 +1,35 @@
+name: Deploy to EC2
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check secrets
+        run: |
+          echo "host len: ${#HOST}"
+          echo "user len: ${#USER}"
+          echo "key  len: ${#KEY}"
+          # 鍵の先頭だけ形式確認（中身全文は出さない）
+          echo "$KEY" | head -1
+        env:
+          HOST: ${{ secrets.EC2_HOST_NAME }}
+          USER: ${{ secrets.EC2_USER_NAME }}
+          KEY: ${{ secrets.EC2_PRIVATE_KEY }}        
+
+      - name: Set up SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST_NAME }}
+          username: ${{ secrets.EC2_USER_NAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            echo "1--------------------------------"
+            cd terraform-v2/docker-nestjs-nextjs-demo
+            git checkout feature/nuxt-ec2
+            git pull origin feature/nuxt-ec2
+            docker compose up -d --build

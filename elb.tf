@@ -89,13 +89,18 @@ resource "aws_lb_listener" "aws_listener_https" {
 # target group(追加)
 # ---------------------------------------------
 resource "aws_lb_target_group" "alb_target_group" {
-  name     = "${var.environment}-app-tg"
-  port     = "80"
+  name     = "${var.environment}-app-tg-3000"
+  port     = 3000
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
+  # port 変更時は作り直しになるため、Listener 参照中の削除エラーを防ぐ
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = {
-    Name = "${var.environment}-app-tg"
+    Name = "${var.environment}-app-tg-3000"
     Env  = var.environment
   }
 }
@@ -103,5 +108,5 @@ resource "aws_lb_target_group" "alb_target_group" {
 resource "aws_lb_target_group_attachment" "instance" {
   target_group_arn = aws_lb_target_group.alb_target_group.arn
   target_id        = aws_instance.test-ec2.id
-  port             = 80
+  port             = 3000
 }

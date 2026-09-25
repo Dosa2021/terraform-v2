@@ -41,10 +41,38 @@ resource "aws_instance" "test-ec2" {
 
   user_data = <<-EOF
     #!/bin/bash
-    yum update -y
-    yum install -y httpd
-    echo "<h1>Hello!!</h1>" > /var/www/html/index.html
-    systemctl enable --now httpd
+    set -eux
+
+    dnf update -y
+    dnf install -y git docker
+
+    systemctl enable --now docker
+    usermod -aG docker ec2-user
+
+    # ソケットのグループ権限を明示
+    if [ -S /var/run/docker.sock ]; then
+      chgrp docker /var/run/docker.sock
+      chmod 660 /var/run/docker.sock
+    fi
+
+    # Docker Compose plugin
+    ARCH=$(uname -m)
+    case "$ARCH" in
+      aarch64) COMPOSE_ARCH=aarch64 ;;
+      *) COMPOSE_ARCH=x86_64 ;;
+    esac
+    mkdir -p /usr/local/lib/docker/cli-plugins
+    curl -fsSL "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-$${COMPOSE_ARCH}" \
+      -o /usr/local/lib/docker/cli-plugins/docker-compose
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+    # Node.js 20 + pm2（任意の補助用）
+    curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+    dnf install -y nodejs
+    npm install -g pm2
+
+    mkdir -p /var/www/nuxt
+    chown -R ec2-user:ec2-user /var/www/nuxt
   EOF
 
   capacity_reservation_specification {
