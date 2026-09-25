@@ -9,6 +9,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check secrets
+        run: |
+          echo "host len: ${#HOST}"
+          echo "user len: ${#USER}"
+          echo "key  len: ${#KEY}"
+          # 鍵の先頭だけ形式確認（中身全文は出さない）
+          echo "$KEY" | head -1
+        env:
+          HOST: ${{ secrets.EC2_HOST_NAME }}
+          USER: ${{ secrets.EC2_USER_NAME }}
+          KEY: ${{ secrets.EC2_PRIVATE_KEY }}        
+
       - name: Set up SSH
         uses: appleboy/ssh-action@master
         with:
