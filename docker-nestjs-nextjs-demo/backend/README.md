@@ -1,5 +1,9 @@
 # Backend (Hono)
 
+Node: v22.16.0
+
+docker exec -it mysql-container mysql -u testuser -p
+
 ```bash
 npm install
 npm run start:dev
