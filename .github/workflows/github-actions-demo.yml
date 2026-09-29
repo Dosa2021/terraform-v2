@@ -28,8 +28,12 @@ jobs:
           username: ${{ secrets.EC2_USER_NAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            echo "1--------------------------------"
-            cd terraform-v2/docker-nestjs-nextjs-demo
-            git checkout feature/nuxt-ec2
-            git pull origin feature/nuxt-ec2
+            if [ ! -d "$HOME/terraform-v2/.git" ]; then
+              git clone ${{ secrets.REPOSITORY_URL }} "$HOME/terraform-v2"
+            fi
+            cd "$HOME/terraform-v2"
+            git fetch origin
+            git checkout feature/db
+            git pull origin feature/db
+            cd docker-nestjs-nextjs-demo
             docker compose up -d --build
