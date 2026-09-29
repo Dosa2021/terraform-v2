@@ -10,7 +10,11 @@ const { data: users, error } = await useFetch<User[]>('/users')
 
 <template>
   <div>
-    <p v-if="error">ユーザーを取得できませんでした</p>
+    <div v-if="error">
+      <p>ユーザーを取得できませんでした</p>
+      <p>status: {{ error.statusCode }} {{ error.statusMessage }}</p>
+      <pre>{{ error.data ?? error.message }}</pre>
+    </div>
     <ul v-else>
       <li v-for="user in users" :key="user.id">
         {{ user.name }}（{{ user.email }}）
