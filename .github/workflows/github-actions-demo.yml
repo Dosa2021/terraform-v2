@@ -28,8 +28,41 @@ jobs:
           username: ${{ secrets.EC2_USER_NAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            echo "1--------------------------------"
-            cd terraform-v2/docker-nestjs-nextjs-demo
-            git checkout feature/nuxt-ec2
-            git pull origin feature/nuxt-ec2
+            if [ ! -d "$HOME/terraform-v2/.git" ]; then
+              git clone ${{ secrets.REPOSITORY_URL }} "$HOME/terraform-v2"
+            fi
+            cd "$HOME/terraform-v2"
+            git fetch origin
+            git checkout feature/db
+            git pull origin feature/db
+            cd docker-nestjs-nextjs-demo
+            cat > .env << 'EOF'
+            ${{ secrets.COMPOSE_ENV }}
+            EOF
+            cat > backend/.env << 'EOF'
+            ${{ secrets.BACKEND_ENV }}
+            EOF
             docker compose up -d --build
+
+            for i in $(seq 1 30); do
+              docker compose exec -T db mysqladmin ping -h 127.0.0.1 -uroot -p123456 --silent && break
+              sleep 2
+            done
+
+            docker compose exec -T db mysql -uroot -p123456 -e "
+            CREATE USER IF NOT EXISTS 'testuser'@'%' IDENTIFIED BY '123456';
+            GRANT ALL PRIVILEGES ON test.* TO 'testuser'@'%';
+            FLUSH PRIVILEGES;
+            "
+
+            for i in $(seq 1 60); do
+              docker compose exec -T backend test -x node_modules/.bin/tsx && break
+              sleep 2
+            done
+
+            docker compose exec -T backend npx drizzle-kit push --force
+
+            count=$(docker compose exec -T db mysql -N -utestuser -p123456 test -e "SELECT COUNT(*) FROM users;")
+            if [ "$count" = "0" ]; then
+              docker compose exec -T backend npm run db:seed
+            fi
