@@ -43,3 +43,4 @@ jobs:
             ${{ secrets.BACKEND_ENV }}
             EOF
             docker compose up -d --build
+            docker compose exec -T backend npm run db:seed
