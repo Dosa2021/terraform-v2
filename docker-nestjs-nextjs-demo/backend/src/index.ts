@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { db } from './db/index.js'
-import { users } from './db/schema.js'
+import { signupSchema, users } from './models/user.js'
 import { sign } from 'hono/jwt'
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
@@ -29,11 +29,11 @@ app.get('/users', async (c) => {
 })
 
 app.post('/signup', async (c) => {
-  const { name, email, password } = await c.req.json<{
-    name: string
-    email: string
-    password: string
-  }>()
+  const parsed = signupSchema.safeParse(await c.req.json())
+  if (!parsed.success) {
+    return c.json({ error: parsed.error.flatten() }, 400)
+  }
+  const { name, email, password } = parsed.data
   const [existing] = await db.select().from(users).where(eq(users.email, email))
   if (existing) {
     return c.json({ error: 'このメールアドレスは既に登録されています' }, 409)

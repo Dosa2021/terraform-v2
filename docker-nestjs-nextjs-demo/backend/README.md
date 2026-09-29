@@ -15,3 +15,17 @@ Docker:
 ```bash
 docker compose up --build backend
 ```
+
+### ユーザー登録
+
+・マイグレーションファイル作成
+cd docker-nestjs-nextjs-demo/backend
+npx drizzle-kit generate
+
+・マイグレーション実行
+npx drizzle-kit migrate
+
+・マイグレーション実行(強制？)
+npx drizzle-kit push
+
+

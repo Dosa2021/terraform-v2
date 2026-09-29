@@ -8,6 +8,20 @@
       "when": 1790563571571,
       "tag": "0000_silky_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1790666212931,
+      "tag": "0001_talented_star_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1790666982247,
+      "tag": "0002_huge_ender_wiggin",
+      "breakpoints": true
     }
   ]
 }
