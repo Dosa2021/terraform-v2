@@ -3,6 +3,10 @@ terraform apply -var-file="envs/dev/terraform.tfvars"
 
 terraform destroy -var-file="envs/dev/terraform.tfvars"
 
+## 動作手順
+・terraform apply
+・githubのEC2_HOST_NAME変更
+
 ## トラブル
 ・ドメインにアクセスできない
     →dnsキャッシュ？が原因だったっぽい
