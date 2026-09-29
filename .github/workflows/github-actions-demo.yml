@@ -36,4 +36,10 @@ jobs:
             git checkout feature/db
             git pull origin feature/db
             cd docker-nestjs-nextjs-demo
+            cat > .env << 'EOF'
+            ${{ secrets.COMPOSE_ENV }}
+            EOF
+            cat > backend/.env << 'EOF'
+            ${{ secrets.BACKEND_ENV }}
+            EOF
             docker compose up -d --build
