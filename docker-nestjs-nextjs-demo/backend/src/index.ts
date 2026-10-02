@@ -1,11 +1,13 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { db } from './db/index.js'
-import { users } from './db/schema.js'
+import { signupSchema, users } from './models/user.js'
+import { sign } from 'hono/jwt'
+import bcrypt from 'bcryptjs'
+import { eq } from 'drizzle-orm'
 
 const app = new Hono()
 
-// app.get('/', (c) => c.text('Hello World! hoge'))
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
@@ -26,6 +28,20 @@ app.get('/users', async (c) => {
   }
 })
 
+app.post('/signup', async (c) => {
+  const parsed = signupSchema.safeParse(await c.req.json())
+  if (!parsed.success) {
+    return c.json({ error: parsed.error.flatten() }, 400)
+  }
+  const { name, email, password } = parsed.data
+  const [existing] = await db.select().from(users).where(eq(users.email, email))
+  if (existing) {
+    return c.json({ error: 'このメールアドレスは既に登録されています' }, 409)
+  }
+  const passwordHash = await bcrypt.hash(password, 10)
+  await db.insert(users).values({ name, email, passwordHash })
+  return c.json({ ok: true }, 201)
+})
 
 const port = Number(process.env.PORT ?? 8000)
 
