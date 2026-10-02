@@ -11,7 +11,10 @@ export const users = mysqlTable('users', {
 })
 
 export const signupSchema = z.object({
-  name: z.string().min(1).openapi({ example: 'Taro' }),
+  name: z.string()
+    .trim()
+    .min(1)
+    .openapi({ example: 'Taro' }),
   email: z.email().openapi({ example: 'user@example.com' }),
   password: z.string().min(8).openapi({ example: 'password' }),
 })
