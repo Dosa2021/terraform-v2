@@ -5,6 +5,7 @@ import { signupSchema, users } from './models/user.js'
 import { sign } from 'hono/jwt'
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
+import { use } from 'hono/jsx'
 
 const app = new Hono()
 
@@ -26,6 +27,13 @@ app.get('/users', async (c) => {
   } catch (error) {
     return c.json({ error: 'Database query failed' }, 500)
   }
+})
+
+app.get('/users/:id', async (c) => {
+  const user_id = Number(c.req.param('id'))
+  const user = await db.select().from(users).where(eq(users.id, user_id))
+
+  return c.json(user)
 })
 
 app.post('/signup', async (c) => {
