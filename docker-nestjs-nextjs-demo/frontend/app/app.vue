@@ -9,7 +9,7 @@ const { data: users, error } = await useFetch<User[]>('/users')
 </script>
 
 <template>
-  <div>
+  <!-- <div>
     <div v-if="error">
       <p>ユーザーを取得できませんでした</p>
       <p>status: {{ error.statusCode }} {{ error.statusMessage }}</p>
@@ -20,5 +20,8 @@ const { data: users, error } = await useFetch<User[]>('/users')
         {{ user.name }}（{{ user.email }}）
       </li>
     </ul>
-  </div>
+  </div> -->
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

@@ -29,3 +29,7 @@ npx drizzle-kit migrate
 npx drizzle-kit push
 
 
+
+curl -s -w "\n%{http_code}\n" http://localhost:8000/signup \
+  -H 'content-type: application/json' \
+  -d '{"name":"Taro","email":"not-an-email","password":"password"}'
