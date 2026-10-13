@@ -21,5 +21,7 @@ export const signupSchema = z.object({
     .min(1)
     .max(255)
     .openapi({ example: 'user@example.com' }),
-  password: z.string().min(8).openapi({ example: 'password' }),
+  password: z.string()
+    .min(6)
+    .openapi({ example: 'password' }),
 })
