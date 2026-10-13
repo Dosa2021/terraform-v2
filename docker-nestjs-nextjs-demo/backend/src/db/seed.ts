@@ -1,15 +1,19 @@
 import 'dotenv/config'
 import { faker } from '@faker-js/faker'
+import bcrypt from 'bcryptjs'
 import { db } from './index.js'
 import { users } from './schema.js'
 
 async function seed() {
   console.log('🌱 ダミーデータの投入を開始します...')
 
+  const passwordHash = await bcrypt.hash('password', 10)
+
   // 例: 50件のユーザーデータを生成
   const dummyUsers = Array.from({ length: 50 }, () => ({
     name: faker.person.fullName(),
     email: faker.internet.email().toLowerCase(),
+    passwordHash,
     createdAt: faker.date.past()
   }))
 
